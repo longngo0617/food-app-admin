@@ -1,20 +1,20 @@
 import AddIcon from "@material-ui/icons/Add";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import EventIcon from '@material-ui/icons/Event';
-import PeopleIcon from '@material-ui/icons/People';
+import EventIcon from "@material-ui/icons/Event";
+import PeopleIcon from "@material-ui/icons/People";
 import PersonIcon from "@material-ui/icons/Person";
 import SearchIcon from "@material-ui/icons/Search";
 import StorefrontIcon from "@material-ui/icons/Storefront";
 import React from "react";
 import styled from "styled-components";
 import { ItemOption } from "./ItemOption";
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
-import AssignmentIcon from '@material-ui/icons/Assignment';
+import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
+import AssignmentIcon from "@material-ui/icons/Assignment";
 interface BarProps {
-
+  fc: () => void;
 }
 
-export const Bar: React.FC<BarProps> = () => {
+export const Bar: React.FC<BarProps> = ({ fc }) => {
   return (
     <FilterBarContainer>
       <FilterBar>
@@ -28,9 +28,9 @@ export const Bar: React.FC<BarProps> = () => {
               name="displayname"
               autoComplete="off"
               placeholder="Search people"
-            //   onChange={(e) => setValue(e.target.value)}
-            //   value={value}
-              // onClick={fc}
+              //   onChange={(e) => setValue(e.target.value)}
+              //   value={value}
+              // onClick={() => console.log('111')}
             />
           </InputContainer>
           <ArrayHintWrap></ArrayHintWrap>
@@ -48,7 +48,7 @@ export const Bar: React.FC<BarProps> = () => {
               IconN={PersonIcon}
             />
             <ButtonWrap>
-              <Button>
+              <Button onClick={fc}>
                 <IconAdd />
                 <Text>Thêm sản phẩm</Text>
               </Button>
@@ -59,11 +59,7 @@ export const Bar: React.FC<BarProps> = () => {
               text="Loại sản phẩm"
               IconN={AssignmentIcon}
             />
-            <ItemOption
-              href="/su-kien"
-              text="Sự kiện"
-              IconN={EventIcon}
-            />
+            <ItemOption href="/su-kien" text="Sự kiện" IconN={EventIcon} />
             <ItemOption
               href="/khach-hang"
               text="Khách hàng"
@@ -86,7 +82,7 @@ const FilterBarContainer = styled.div`
   position: relative;
   box-sizing: border-box;
   display: flex;
-  height:100%;
+  height: 100%;
 `;
 const FilterBar = styled.div`
   width: 360px;
@@ -113,9 +109,9 @@ const Head = styled.h2`
   overflow-wrap: break-word;
 `;
 const ArrowBack = styled(ArrowBackIcon)`
-  cursor:pointer;
-  color:#1877f2;
-  margin-right:15px;
+  cursor: pointer;
+  color: #1877f2;
+  margin-right: 15px;
 `;
 const InputContainer = styled.div`
   display: flex;
@@ -158,6 +154,7 @@ const Category = styled.div`
 const Wrap = styled.div``;
 const ButtonWrap = styled.div`
   margin: 8px 16px;
+  user-select: none;
 `;
 const Button = styled.div`
   margin: 0;

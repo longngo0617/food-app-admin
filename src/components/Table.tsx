@@ -195,7 +195,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         </Typography>
       ) : (
         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Nutrition
+          Quản lí sản phẩm
         </Typography>
       )}
       {numSelected > 0 ? (
@@ -219,6 +219,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       width: '100%',
+      padding:'12px 16px'
     },
     paper: {
       width: '100%',

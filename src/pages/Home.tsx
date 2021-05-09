@@ -1,16 +1,17 @@
 import React from "react";
-import { Route } from "react-router";
+import { Route, useRouteMatch } from "react-router";
 import { Switch } from "react-router-dom";
 import styled from "styled-components";
 import { Bar } from "../components/Bar";
 import { PopupAddProduct } from "../components/PopupAddProduct";
 import Table from "../components/Table";
+import { TypeTable } from "../components/TypeTable";
 import { db } from "../firebase/firebase";
 
 interface HomeProps {}
 
 export const Home: React.FC<HomeProps> = () => {
-  const [open, setOpen] = React.useState<boolean>(true);
+  const [open, setOpen] = React.useState<boolean>(false);
   const [typeFoods, setTypeFoods] = React.useState<any>([]);
 
   const fetchTypes = async () => {
@@ -25,17 +26,20 @@ export const Home: React.FC<HomeProps> = () => {
   React.useEffect(() => {
     fetchTypes();
   }, []);
-
+  const { url } = useRouteMatch();
   return (
     <Wrap>
       <Page>
-        <Bar />
+        <Bar fc={() => setOpen(true)} />
         <Switch>
-          <Route path="/quan-li-san-pham">
+          <Route exact path={`${url}`}>
             <Table />
           </Route>
+          <Route exact path={`${url}/loai-san-pham`}>
+            <TypeTable data={typeFoods} />
+          </Route>
         </Switch>
-        {open && <PopupAddProduct fc={() => setOpen(!open)} data={typeFoods} />}
+        {open && <PopupAddProduct fc={() => setOpen(false)} data={typeFoods} />}
       </Page>
     </Wrap>
   );
