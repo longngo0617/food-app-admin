@@ -5,6 +5,7 @@ import { Field, Form, Formik } from "formik";
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { storage, db } from "../firebase/firebase";
+import { UserContext } from "../utils/Provider";
 import { SelectFormField } from "./SelectFormField";
 import { TextFormField } from "./TextFormField";
 interface PopupAddProductProps {
@@ -18,8 +19,8 @@ export const PopupAddProduct: React.FC<PopupAddProductProps> = ({
 }) => {
   const inputImage: any = useRef(null);
   const [arrImage, setArrImage] = useState<any>([]);
+  const { getProducts, openAlert, closeAlert } = React.useContext(UserContext);
   const [arrImagePrev, setArrImagePrev] = useState<any>([]);
-  const [image, setImage] = useState([]);
   const stars = [1, 2, 3, 4, 5];
   const handleImageChange = (e: any) => {
     if (e.target.files) {
@@ -36,10 +37,14 @@ export const PopupAddProduct: React.FC<PopupAddProductProps> = ({
     for (let i = 0; i < arrImage.length; i++) {
       const fileRef = storage.ref(`images/${arrImage[i].name}`);
       await fileRef.put(arrImage[i]);
-      const url = await fileRef.getDownloadURL();
-      await setImage((prevImage) => prevImage.concat(url));
+      await fileRef.getDownloadURL().then((url) => {
+        const image = url;
+        return db
+          .collection("Foods")
+          .add({ ...values, image })
+          .then(() => getProducts({ ...values, image }));
+      });
     }
-    await db.collection("Foods").add({ ...values, image });
   };
 
   const removeItem = (image: string) => {
@@ -62,10 +67,18 @@ export const PopupAddProduct: React.FC<PopupAddProductProps> = ({
           }}
           onSubmit={async (values, formik) => {
             await handleUpload(values);
-            await formik.resetForm();
-            setArrImagePrev([]);
-            setArrImage([]);
-            setImage([]);
+            formik.resetForm();
+            fc();
+            await openAlert();
+            const timeId = setTimeout(() => {
+              closeAlert();
+            }, 3000);
+
+            return () => {
+              clearTimeout(timeId);
+              setArrImagePrev([]);
+              setArrImage([]);
+            };
           }}
         >
           {() => (
