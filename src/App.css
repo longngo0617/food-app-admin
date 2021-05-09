@@ -228,3 +228,11 @@
   position: absolute;
   overflow: hidden;
 }
+.activeLink {
+  background-color: rgba(45, 156, 255, 0.1);
+  border-radius: 8px; 
+}
+.activeLink .icon {
+  background-color: #1877f2;
+  color: #fff;
+}
