@@ -21,6 +21,8 @@ import clsx from "clsx";
 import React from "react";
 import styled from "styled-components";
 import { FormType } from "./FormType";
+import { db } from "../firebase/firebase";
+import { UserContext } from "../utils/Provider";
 
 const useToolbarStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -55,7 +57,7 @@ export const TypeTable: React.FC<TypeTableProps> = ({ data }) => {
   const [selected, setSelected] = React.useState<string[]>([]);
   let numSelected = selected.length;
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
-
+  const { removeDataType } = React.useContext(UserContext);
   const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected: string[] = [];
@@ -77,13 +79,28 @@ export const TypeTable: React.FC<TypeTableProps> = ({ data }) => {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = data.map((n: any) => n.name);
+      const newSelecteds = data.map((n: any) => n.idType);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
-
+  const handleDelete = (event: React.MouseEvent<unknown>) => {
+    selected.map((id: string) => {
+      return db
+        .collection("TypeFoods")
+        .doc(id)
+        .delete()
+        .then(() => {
+          removeDataType(id);
+        })
+        .catch((error: any) => {
+          console.error("Error removing document: ", error);
+        });
+    });
+    setSelected([]);
+  };
+  if (!data) return null;
   return (
     <Page>
       <FormType />
@@ -113,7 +130,7 @@ export const TypeTable: React.FC<TypeTableProps> = ({ data }) => {
         )}
         {numSelected > 0 && (
           <Tooltip title="Delete">
-            <IconButton aria-label="delete">
+            <IconButton aria-label="delete" onClick={handleDelete}>
               <DeleteIcon />
             </IconButton>
           </Tooltip>
@@ -136,37 +153,38 @@ export const TypeTable: React.FC<TypeTableProps> = ({ data }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((row: any, index: number) => {
-              const isItemSelected = isSelected(row.name);
-              const labelId = `enhanced-table-checkbox-${index}`;
+            {data &&
+              data.map((row: any, index: number) => {
+                const isItemSelected = isSelected(row.idType);
+                const labelId = `enhanced-table-checkbox-${index}`;
 
-              return (
-                <TableRow
-                  key={row.name}
-                  hover
-                  onClick={(event) => handleClick(event, row.name)}
-                  role="checkbox"
-                  aria-checked={isItemSelected}
-                  tabIndex={-1}
-                  selected={isItemSelected}
-                >
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      checked={isItemSelected}
-                      inputProps={{ "aria-labelledby": labelId }}
-                    />
-                  </TableCell>
-                  <TableCell component="th" scope="row">
-                    {row.name}
-                  </TableCell>
-                  <TableCell align="right">
-                    <ImageWrap>
-                      <img src={row.image} alt={row.image} />
-                    </ImageWrap>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+                return (
+                  <TableRow
+                    key={row.name}
+                    hover
+                    onClick={(event) => handleClick(event, row.idType)}
+                    role="checkbox"
+                    aria-checked={isItemSelected}
+                    tabIndex={-1}
+                    selected={isItemSelected}
+                  >
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        checked={isItemSelected}
+                        inputProps={{ "aria-labelledby": labelId }}
+                      />
+                    </TableCell>
+                    <TableCell component="th" scope="row">
+                      {row.name}
+                    </TableCell>
+                    <TableCell align="right">
+                      <ImageWrap>
+                        <img src={row.image} alt={row.image} />
+                      </ImageWrap>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
           </TableBody>
         </Table>
       </TableContainer>

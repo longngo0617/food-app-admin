@@ -3,24 +3,25 @@ import { Route, useRouteMatch } from "react-router";
 import { Switch } from "react-router-dom";
 import styled from "styled-components";
 import { Bar } from "../components/Bar";
+import { MessageAlert } from "../components/MessageAlert";
 import { PopupAddProduct } from "../components/PopupAddProduct";
 import Table from "../components/Table";
 import { TypeTable } from "../components/TypeTable";
 import { db } from "../firebase/firebase";
+import { UserContext } from "../utils/Provider";
 
 interface HomeProps {}
 
 export const Home: React.FC<HomeProps> = () => {
   const [open, setOpen] = React.useState<boolean>(false);
-  const [typeFoods, setTypeFoods] = React.useState<any>([]);
-
+  const { getDataType, dataType,success } = React.useContext(UserContext);
   const fetchTypes = async () => {
     const response = db.collection("TypeFoods");
     const data = await response.get();
     data.docs.forEach((item) => {
       const idType = item.id;
       const type = { ...item.data(), idType };
-      setTypeFoods((prevType: any) => prevType.concat(type));
+      getDataType(type);
     });
   };
   React.useEffect(() => {
@@ -32,14 +33,15 @@ export const Home: React.FC<HomeProps> = () => {
       <Page>
         <Bar fc={() => setOpen(true)} />
         <Switch>
-          <Route exact path={`${url}`}>
+          <Route path={`${url}/quan-li-san-pham`}>
             <Table />
           </Route>
           <Route exact path={`${url}/loai-san-pham`}>
-            <TypeTable data={typeFoods} />
+            <TypeTable data={dataType} />
           </Route>
         </Switch>
-        {open && <PopupAddProduct fc={() => setOpen(false)} data={typeFoods} />}
+        {open && <PopupAddProduct fc={() => setOpen(false)} data={dataType} />}
+        {success && <MessageAlert/>}
       </Page>
     </Wrap>
   );
