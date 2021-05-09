@@ -20,6 +20,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import clsx from "clsx";
 import React from "react";
 import styled from "styled-components";
+import { FormType } from "./FormType";
 
 const useToolbarStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -85,6 +86,7 @@ export const TypeTable: React.FC<TypeTableProps> = ({ data }) => {
 
   return (
     <Page>
+      <FormType />
       <Toolbar
         className={clsx(classes.root, {
           [classes.highlight]: numSelected > 0,
@@ -140,7 +142,7 @@ export const TypeTable: React.FC<TypeTableProps> = ({ data }) => {
 
               return (
                 <TableRow
-                  key={row.typeID}
+                  key={row.name}
                   hover
                   onClick={(event) => handleClick(event, row.name)}
                   role="checkbox"
