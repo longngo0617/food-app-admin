@@ -2,13 +2,13 @@ import { createContext, useReducer } from "react";
 
 const initState = {
   dataType: [],
-  product: [],
+  products: [],
   success: false,
 };
 
 const UserContext = createContext({
   dataType: [],
-  product: [],
+  products: [],
   success: false,
   getDataType: (item: any) => {},
   getProducts: (item: any) => {},
@@ -25,7 +25,9 @@ const userReducer = (state: any, action: any) => {
         dataType: state.dataType.concat(action.payload),
       };
     case "REMOVE_DATA_TYPE":
-      const filtered = state.dataType.filter((x: any) => x.idType !== action.payload);
+      const filtered = state.dataType.filter(
+        (x: any) => x.idType !== action.payload
+      );
       return {
         ...state,
         dataType: filtered,
@@ -33,7 +35,7 @@ const userReducer = (state: any, action: any) => {
     case "ADD_DATA_PRODUCT":
       return {
         ...state,
-        product: state.product.concat(action.payload),
+        products: [...state.products, action.payload],
       };
     case "OPEN_ALERT":
       return {
@@ -76,6 +78,7 @@ const UserProvider = (props: any) => {
   const values = {
     dataType: state.dataType,
     success: state.success,
+    products: state.products,
     getDataType,
     getProducts,
     openAlert,
