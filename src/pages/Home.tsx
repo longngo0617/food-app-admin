@@ -26,20 +26,19 @@ export const Home: React.FC<HomeProps> = () => {
         });
       });
   };
-  
   React.useEffect(() => {
     fetchTypes();
   }, []);
-
+  const { url } = useRouteMatch();
   return (
     <Wrap>
       <Page>
         <Bar fc={() => setOpen(true)} />
         <Switch>
-          <Route path={`/`}>
+          <Route path={`${url}/quan-li-san-pham`}>
             <Table />
           </Route>
-          <Route exact path={`/loai-san-pham`}>
+          <Route exact path={`${url}/loai-san-pham`}>
             <TypeTable data={dataType} />
           </Route>
         </Switch>
