@@ -31,7 +31,6 @@ export const Home: React.FC<HomeProps> = () => {
     fetchTypes();
   }, []);
 
-  const { url } = useRouteMatch();
   return (
     <Wrap>
       <Page>
