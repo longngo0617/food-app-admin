@@ -19,7 +19,7 @@ export const PopupAddProduct: React.FC<PopupAddProductProps> = ({
 }) => {
   const inputImage: any = useRef(null);
   const [arrImage, setArrImage] = useState<any>([]);
-  const { getProducts, openAlert, closeAlert } = React.useContext(UserContext);
+  const { getProducts } = React.useContext(UserContext);
   const [arrImagePrev, setArrImagePrev] = useState<any>([]);
   const stars = [1, 2, 3, 4, 5];
   const handleImageChange = (e: any) => {
@@ -34,17 +34,15 @@ export const PopupAddProduct: React.FC<PopupAddProductProps> = ({
   };
 
   const handleUpload = async (values: any) => {
+    let newArrayImage: any = [];
     for (let i = 0; i < arrImage.length; i++) {
       const fileRef = storage.ref(`images/${arrImage[i].name}`);
       await fileRef.put(arrImage[i]);
       await fileRef.getDownloadURL().then((url) => {
-        const image = url;
-        return db
-          .collection("Foods")
-          .add({ ...values, image })
-          .then(() => getProducts({ ...values, image }));
+        newArrayImage.push(url);
       });
     }
+    return newArrayImage;
   };
 
   const removeItem = (image: string) => {
@@ -66,19 +64,13 @@ export const PopupAddProduct: React.FC<PopupAddProductProps> = ({
             star: "",
           }}
           onSubmit={async (values, formik) => {
-            await handleUpload(values);
+            const image = await handleUpload(values);
+            await db
+              .collection("Foods")
+              .add({ ...values, image })
+              .then(() => getProducts(values));
             formik.resetForm();
             fc();
-            await openAlert();
-            const timeId = setTimeout(() => {
-              closeAlert();
-            }, 3000);
-
-            return () => {
-              clearTimeout(timeId);
-              setArrImagePrev([]);
-              setArrImage([]);
-            };
           }}
         >
           {() => (

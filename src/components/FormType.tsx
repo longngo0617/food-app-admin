@@ -35,13 +35,13 @@ export const FormType: React.FC<FormTypeProps> = () => {
     const fileRef = storage.ref(`images/${arrImage[0].name}`);
     await fileRef.put(arrImage[0]);
     await fileRef.getDownloadURL().then((url) => {
-      const image = url;
+      values.image = url;
       return db
         .collection("TypeFoods")
-        .add({ ...values, image })
+        .add(values)
         .then((docRef) => {
           values.idType = docRef.id;
-          getDataType({ ...values, image });
+          getDataType(values);
         });
     });
   };
