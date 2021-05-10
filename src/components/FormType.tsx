@@ -1,4 +1,4 @@
-import { Button } from "@material-ui/core";
+import { Button, Typography } from "@material-ui/core";
 import { Field, Form, Formik } from "formik";
 import React from "react";
 import styled from "styled-components";
@@ -47,6 +47,9 @@ export const FormType: React.FC<FormTypeProps> = () => {
   };
   return (
     <Container>
+      <Typography variant="h5" gutterBottom>
+        Thêm loại sản phẩm
+      </Typography>
       <Formik
         initialValues={{
           name: "",
@@ -125,6 +128,9 @@ export const FormType: React.FC<FormTypeProps> = () => {
 };
 const Container = styled.div`
   width: 50%;
+  border: 1px solid #e6ecf0;
+  padding: 12px 16px;
+  margin-bottom: 20px;
 `;
 
 const Wrapper = styled.div``;

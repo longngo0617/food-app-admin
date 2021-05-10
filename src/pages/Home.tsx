@@ -37,7 +37,7 @@ export const Home: React.FC<HomeProps> = () => {
       <Page>
         <Bar fc={() => setOpen(true)} />
         <Switch>
-          <Route path={`/quan-li-san-pham`}>
+          <Route path={`/`}>
             <Table />
           </Route>
           <Route exact path={`/loai-san-pham`}>
