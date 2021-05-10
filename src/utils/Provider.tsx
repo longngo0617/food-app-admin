@@ -4,17 +4,24 @@ const initState = {
   dataType: [],
   products: [],
   success: false,
+  newProduct: {},
+  stateEdit: false,
 };
 
 const UserContext = createContext({
   dataType: [],
   products: [],
   success: false,
+  newProduct: {},
+  stateEdit: false,
   getDataType: (item: any) => {},
   getProducts: (item: any) => {},
   removeProduct: (item: any) => {},
   openAlert: () => {},
   closeAlert: () => {},
+  openEdit: (product: any) => {},
+  closeEdit: () => {},
+  editProduct: (product: any) => {},
   removeDataType: (item: string) => {},
 });
 
@@ -56,6 +63,27 @@ const userReducer = (state: any, action: any) => {
         ...state,
         success: false,
       };
+    case "OPEN_EDIT_PRODUCT":
+      return {
+        ...state,
+        stateEdit: true,
+        newProduct: action.payload,
+      };
+    case "CLOSE_EDIT_PRODUCT":
+      return {
+        ...state,
+        stateEdit: false,
+        newProduct: {},
+      };
+    case "EDIT_PRODUCT":
+      const index = state.products.findIndex(
+        (e: any) => e.id === action.payload.id
+      );
+      state.products[index] = action.payload;
+      return {
+        ...state,
+        products: [...state.products],
+      };
     default:
       return state;
   }
@@ -87,10 +115,25 @@ const UserProvider = (props: any) => {
     dispatch({ type: "CLOSE_ALERT" });
   };
 
+  const openEdit = (product: any) => {
+    dispatch({ type: "OPEN_EDIT_PRODUCT", payload: product });
+  };
+
+  const closeEdit = () => {
+    dispatch({ type: "CLOSE_EDIT_PRODUCT" });
+  };
+  const editProduct = (product: any) => {
+    dispatch({ type: "EDIT_PRODUCT", payload: product });
+  };
   const values = {
     dataType: state.dataType,
     success: state.success,
     products: state.products,
+    newProduct: state.newProduct,
+    stateEdit: state.stateEdit,
+    editProduct,
+    closeEdit,
+    openEdit,
     removeProduct,
     getDataType,
     getProducts,

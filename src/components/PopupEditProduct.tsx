@@ -1,27 +1,25 @@
+import React from "react";
+import styled from "styled-components";
 import { Avatar, Button, IconButton } from "@material-ui/core";
 import AddAPhotoIcon from "@material-ui/icons/AddAPhoto";
 import CloseIcon from "@material-ui/icons/Close";
 import { Field, Form, Formik } from "formik";
-import React, { useRef, useState } from "react";
-import styled from "styled-components";
 import { storage, db } from "../firebase/firebase";
 import { UserContext } from "../utils/Provider";
 import { SelectFormField } from "./SelectFormField";
 import { TextFormField } from "./TextFormField";
-interface PopupAddProductProps {
-  fc: () => void;
+interface PopupEditProductProps {
   data: any;
 }
 
-export const PopupAddProduct: React.FC<PopupAddProductProps> = ({
-  fc,
-  data,
-}) => {
-  const inputImage: any = useRef(null);
-  const [arrImage, setArrImage] = useState<any>([]);
-  const { getProducts } = React.useContext(UserContext);
-  const [arrImagePrev, setArrImagePrev] = useState<any>([]);
+export const PopupEditProduct: React.FC<PopupEditProductProps> = ({ data }) => {
+  const inputImage: any = React.useRef(null);
+  const { newProduct, closeEdit }: any = React.useContext(UserContext);
+  const [arrImage, setArrImage] = React.useState<any>([]);
+  const { editProduct } = React.useContext(UserContext);
+  const [arrImagePrev, setArrImagePrev] = React.useState<any>(newProduct.image);
   const stars = [1, 2, 3, 4, 5];
+
   const handleImageChange = (e: any) => {
     if (e.target.files) {
       setArrImage(e.target.files);
@@ -49,31 +47,26 @@ export const PopupAddProduct: React.FC<PopupAddProductProps> = ({
     const filtered = arrImagePrev.filter((x: any) => x !== image);
     setArrImagePrev(filtered);
   };
-
   return (
     <Container>
       <Overlay />
       <div className="follow-main">
         <Formik
-          initialValues={{
-            name: "",
-            price: "",
-            describe: "",
-            typeID: "",
-            quantity: "",
-            star: "",
-          }}
-          onSubmit={async (values, formik) => {
+          initialValues={newProduct}
+          onSubmit={async (values) => {
             const image = await handleUpload(values);
+            if (image.length) {
+              values.image = image;
+            }
             await db
               .collection("Foods")
-              .add({ ...values, image })
-              .then(() => getProducts({ ...values, image }));
-            formik.resetForm();
-            fc();
+              .doc(values.id)
+              .update(values)
+              .then(() => editProduct(values));
+            closeEdit();
           }}
         >
-          {() => (
+          {({ values }) => (
             <Form autoComplete="off">
               <div className="follow-modal">
                 <Wrapper>
@@ -85,13 +78,13 @@ export const PopupAddProduct: React.FC<PopupAddProductProps> = ({
                       <IconButton
                         aria-label="close-icon"
                         color="primary"
-                        onClick={fc}
+                        onClick={() => closeEdit()}
                       >
                         <CloseIcon />
                       </IconButton>
                     </div>
                     <div className="follow-modal-top-text">
-                      <h2 className="title">New Product</h2>
+                      <h2 className="title">{values.name}</h2>
                     </div>
                     <div className="follow-modal-top-icon">
                       <Button
@@ -100,7 +93,7 @@ export const PopupAddProduct: React.FC<PopupAddProductProps> = ({
                         className="btn-save"
                         type="submit"
                       >
-                        Thêm sản phẩm
+                        Sửa sản phẩm
                       </Button>
                     </div>
                   </div>
@@ -233,7 +226,6 @@ export const PopupAddProduct: React.FC<PopupAddProductProps> = ({
     </Container>
   );
 };
-
 const Container = styled.div`
   position: fixed;
   top: 0;
@@ -345,4 +337,3 @@ const Note = styled.span`
   font-size: 12px;
   margin-top: 12px;
 `;
-

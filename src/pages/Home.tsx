@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { Bar } from "../components/Bar";
 import { MessageAlert } from "../components/MessageAlert";
 import { PopupAddProduct } from "../components/PopupAddProduct";
+import { PopupEditProduct } from "../components/PopupEditProduct";
 import Table from "../components/Table";
 import { TypeTable } from "../components/TypeTable";
 import { db } from "../firebase/firebase";
@@ -14,7 +15,7 @@ interface HomeProps {}
 
 export const Home: React.FC<HomeProps> = () => {
   const [open, setOpen] = React.useState<boolean>(false);
-  const { getDataType, dataType, success } = React.useContext(UserContext);
+  const { getDataType, dataType, success,stateEdit,closeEdit } = React.useContext(UserContext);
   const fetchTypes = async () => {
     if (!dataType.length) {
       db.collection("TypeFoods")
@@ -48,6 +49,7 @@ export const Home: React.FC<HomeProps> = () => {
           </Route>
         </Switch>
         {open && <PopupAddProduct fc={() => setOpen(false)} data={dataType} />}
+        {stateEdit && <PopupEditProduct  data={dataType} />}
         {success && <MessageAlert />}
       </Page>
     </Wrap>

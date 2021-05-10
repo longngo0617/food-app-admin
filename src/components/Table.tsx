@@ -15,6 +15,8 @@ import { db } from "../firebase/firebase";
 import { UserContext } from "../utils/Provider";
 import { EnTableHead } from "./EnTableHead";
 import { TableToolBar } from "./TableToolBar";
+import EditIcon from "@material-ui/icons/Edit";
+import { IconButton, Tooltip } from "@material-ui/core";
 
 interface Data {
   id: string;
@@ -23,6 +25,7 @@ interface Data {
   star: number;
   name: string;
   image: string;
+  edit:string;
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -99,7 +102,7 @@ export default function EnhancedTable() {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const { products, getProducts } = React.useContext(UserContext);
+  const { products, getProducts,openEdit } = React.useContext(UserContext);
   const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
@@ -182,7 +185,11 @@ export default function EnhancedTable() {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <TableToolBar numSelected={selected.length} selected={selected} fc={() => setSelected([])} />
+        <TableToolBar
+          numSelected={selected.length}
+          selected={selected}
+          fc={() => setSelected([])}
+        />
         <TableContainer>
           <Table
             className={classes.table}
@@ -209,9 +216,7 @@ export default function EnhancedTable() {
                   return (
                     <TableRow
                       hover
-                      onClick={(event) =>
-                        handleClick(event, row.id as string)
-                      }
+                      onClick={(event) => handleClick(event, row.id as string)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
@@ -244,6 +249,13 @@ export default function EnhancedTable() {
                             alt={row.image as string}
                           />
                         </ImageWrap>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Tooltip title="Edit">
+                          <IconButton aria-label="edit product" onClick={() => openEdit(row as any) }>
+                            <EditIcon />
+                          </IconButton>
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
                   );
