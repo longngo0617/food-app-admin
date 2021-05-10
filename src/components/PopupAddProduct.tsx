@@ -68,7 +68,7 @@ export const PopupAddProduct: React.FC<PopupAddProductProps> = ({
             await db
               .collection("Foods")
               .add({ ...values, image })
-              .then(() => getProducts(values));
+              .then(() => getProducts({ ...values, image }));
             formik.resetForm();
             fc();
           }}

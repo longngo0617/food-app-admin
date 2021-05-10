@@ -13,32 +13,34 @@ import {
   Theme,
 } from "@material-ui/core/styles";
 import { db } from "../firebase/firebase";
+import { UserContext } from "../utils/Provider";
 
 interface TableToolBarProps {
   selected: string[];
-  numSelected:number;
+  numSelected: number;
+  fc:() => void,
 }
 
-export const TableToolBar: React.FC<TableToolBarProps> = (
-  props
-) => {
+export const TableToolBar: React.FC<TableToolBarProps> = (props) => {
   const classes = useToolbarStyles();
-  const { selected,numSelected } = props;
+  const { selected, numSelected,fc } = props;
+  const { removeProduct } = React.useContext(UserContext);
 
   const handleDelete = (event: React.MouseEvent<unknown>) => {
-    selected.map((id: string) => {
-      return db
-        .collection("Foods")
+    selected.map((id: string) => (
+      db.collection("Foods")
         .doc(id)
         .delete()
         .then(() => {
-          // removeDataType(id);
+          removeProduct(id);
         })
         .catch((error: any) => {
           console.error("Error removing document: ", error);
-        });
-    });
+        })
+    ));
+    fc();
   };
+
   return (
     <Toolbar
       className={clsx(classes.root, {
@@ -66,13 +68,13 @@ export const TableToolBar: React.FC<TableToolBarProps> = (
       )}
       {numSelected > 0 ? (
         <Tooltip title="Delete">
-          <IconButton aria-label="delete">
+          <IconButton aria-label="delete" onClick={handleDelete}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
       ) : (
         <Tooltip title="Filter list">
-          <IconButton aria-label="filter list">
+          <IconButton aria-label="filter list" >
             <FilterListIcon />
           </IconButton>
         </Tooltip>

@@ -17,7 +17,7 @@ import { EnTableHead } from "./EnTableHead";
 import { TableToolBar } from "./TableToolBar";
 
 interface Data {
-  id: number;
+  id: string;
   price: number;
   quantity: number;
   star: number;
@@ -101,6 +101,7 @@ export default function EnhancedTable() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const { products, getProducts } = React.useContext(UserContext);
   const [loading, setLoading] = React.useState(false);
+
   React.useEffect(() => {
     if (!products.length) {
       setLoading(true);
@@ -170,17 +171,18 @@ export default function EnhancedTable() {
     setDense(event.target.checked);
   };
 
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
+  const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, products.length - page * rowsPerPage);
+
   if (loading) {
     return null;
   }
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <TableToolBar numSelected={selected.length} selected={selected} />
+        <TableToolBar numSelected={selected.length} selected={selected} fc={() => setSelected([])} />
         <TableContainer>
           <Table
             className={classes.table}
@@ -201,14 +203,14 @@ export default function EnhancedTable() {
               {stableSort(products, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.name as string);
+                  const isItemSelected = isSelected(row.id as string);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow
                       hover
                       onClick={(event) =>
-                        handleClick(event, row.name as string)
+                        handleClick(event, row.id as string)
                       }
                       role="checkbox"
                       aria-checked={isItemSelected}
