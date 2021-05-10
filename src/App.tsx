@@ -10,7 +10,7 @@ function App() {
     <>
       <UserProvider>
         <Router>
-          <Route path="/home">
+          <Route path="/">
             <Home />
           </Route>
         </Router>

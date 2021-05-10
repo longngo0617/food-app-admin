@@ -12,17 +12,33 @@ import {
   makeStyles,
   Theme,
 } from "@material-ui/core/styles";
+import { db } from "../firebase/firebase";
 
 interface TableToolBarProps {
-  numSelected: number;
+  selected: string[];
+  numSelected:number;
 }
 
 export const TableToolBar: React.FC<TableToolBarProps> = (
   props
 ) => {
   const classes = useToolbarStyles();
-  const { numSelected } = props;
+  const { selected,numSelected } = props;
 
+  const handleDelete = (event: React.MouseEvent<unknown>) => {
+    selected.map((id: string) => {
+      return db
+        .collection("Foods")
+        .doc(id)
+        .delete()
+        .then(() => {
+          // removeDataType(id);
+        })
+        .catch((error: any) => {
+          console.error("Error removing document: ", error);
+        });
+    });
+  };
   return (
     <Toolbar
       className={clsx(classes.root, {

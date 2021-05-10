@@ -37,11 +37,14 @@ export const Home: React.FC<HomeProps> = () => {
       <Page>
         <Bar fc={() => setOpen(true)} />
         <Switch>
-          <Route path={`${url}/quan-li-san-pham`}>
+          <Route path={`/loai-san-pham`}>
+            <TypeTable data={dataType} />
+          </Route>
+          <Route path={`/quan-li-san-pham`}>
             <Table />
           </Route>
-          <Route exact path={`${url}/loai-san-pham`}>
-            <TypeTable data={dataType} />
+          <Route exact path={`/`}>
+            <Table />
           </Route>
         </Switch>
         {open && <PopupAddProduct fc={() => setOpen(false)} data={dataType} />}

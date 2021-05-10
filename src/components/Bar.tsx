@@ -38,12 +38,12 @@ export const Bar: React.FC<BarProps> = ({ fc }) => {
         <Category>
           <Wrap>
             <ItemOption
-              href="/home/quan-li-san-pham"
+              href="/quan-li-san-pham"
               text="Quản lí sản phẩm"
               IconN={StorefrontIcon}
             />
             <ItemOption
-              href="/home/tai-khoan-cua-ban"
+              href="/tai-khoan-cua-ban"
               text="Tài khoản của bạn"
               IconN={PersonIcon}
             />
@@ -55,18 +55,18 @@ export const Bar: React.FC<BarProps> = ({ fc }) => {
             </ButtonWrap>
             <Type>Chức năng</Type>
             <ItemOption
-              href="/home/loai-san-pham"
+              href="/loai-san-pham"
               text="Loại sản phẩm"
               IconN={AssignmentIcon}
             />
             <ItemOption href="/su-kien" text="Sự kiện" IconN={EventIcon} />
             <ItemOption
-              href="/home/khach-hang"
+              href="/khach-hang"
               text="Khách hàng"
               IconN={PeopleIcon}
             />
             <ItemOption
-              href="/home/don-hang"
+              href="/don-hang"
               text="Đơn hàng"
               IconN={ShoppingCartIcon}
             />

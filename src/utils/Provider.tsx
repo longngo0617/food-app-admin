@@ -12,6 +12,7 @@ const UserContext = createContext({
   success: false,
   getDataType: (item: any) => {},
   getProducts: (item: any) => {},
+  removeProduct:(item: any) => {},
   openAlert: () => {},
   closeAlert: () => {},
   removeDataType: (item: string) => {},
@@ -36,6 +37,14 @@ const userReducer = (state: any, action: any) => {
       return {
         ...state,
         products: [...state.products, action.payload],
+      };
+    case "REMOVE_DATA_PRODUCT":
+      const filteredProduct = state.products.filter(
+        (x: any) => x.name !== action.payload
+      );
+      return {
+        ...state,
+        products: filteredProduct,
       };
     case "OPEN_ALERT":
       return {
@@ -67,6 +76,10 @@ const UserProvider = (props: any) => {
     dispatch({ type: "ADD_DATA_PRODUCT", payload: item });
   };
 
+  const removeProduct =(item:any) => {
+    dispatch({ type: "REMOVE_DATA_PRODUCT", payload: item });
+    
+  }
   const openAlert = () => {
     dispatch({ type: "OPEN_ALERT" });
   };
@@ -79,6 +92,7 @@ const UserProvider = (props: any) => {
     dataType: state.dataType,
     success: state.success,
     products: state.products,
+    removeProduct,
     getDataType,
     getProducts,
     openAlert,

@@ -180,7 +180,7 @@ export default function EnhancedTable() {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <TableToolBar numSelected={selected.length} />
+        <TableToolBar numSelected={selected.length} selected={selected} />
         <TableContainer>
           <Table
             className={classes.table}
