@@ -100,17 +100,21 @@ export default function EnhancedTable() {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const { products, getProducts } = React.useContext(UserContext);
-
+  const [loading, setLoading] = React.useState(false);
   React.useEffect(() => {
-    db.collection("Foods")
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          const id = doc.id;
-          const product = { ...doc.data(), id };
-          getProducts(product);
+    if (!products.length) {
+      setLoading(true);
+      db.collection("Foods")
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const id = doc.id;
+            const product = { ...doc.data(), id };
+            getProducts(product);
+          });
+          setLoading(false);
         });
-      });
+    }
   }, []);
 
   const handleRequestSort = (
@@ -170,7 +174,9 @@ export default function EnhancedTable() {
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, products.length - page * rowsPerPage);
-
+  if (loading) {
+    return null;
+  }
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>

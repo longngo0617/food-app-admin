@@ -16,15 +16,17 @@ export const Home: React.FC<HomeProps> = () => {
   const [open, setOpen] = React.useState<boolean>(false);
   const { getDataType, dataType, success } = React.useContext(UserContext);
   const fetchTypes = async () => {
-    db.collection("TypeFoods")
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          const idType = doc.id;
-          const type = { ...doc.data(), idType };
-          getDataType(type);
+    if (!dataType.length) {
+      db.collection("TypeFoods")
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const idType = doc.id;
+            const type = { ...doc.data(), idType };
+            getDataType(type);
+          });
         });
-      });
+    }
   };
   React.useEffect(() => {
     fetchTypes();
