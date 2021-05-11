@@ -101,7 +101,7 @@ export default function EnhancedTable() {
   const [orderBy, setOrderBy] = React.useState<keyof Data>("quantity");
   const [selected, setSelected] = React.useState<string[]>([]);
   const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
+  const [dense, setDense] = React.useState(true);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const { products, getProducts, openEdit, dataType } = React.useContext(
     UserContext
@@ -141,7 +141,7 @@ export default function EnhancedTable() {
     }
     setSelected([]);
   };
-
+  console.log(products);
   const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected: string[] = [];
@@ -250,8 +250,8 @@ export default function EnhancedTable() {
                       </TableCell>
                       <TableCell align="right">{row.quantity}</TableCell>
                       <TableCell align="right">{row.star}</TableCell>
-                      <TableCell align="right">
-                        {currencyFormat(row.price as number)} đồng
+                      <TableCell align="right" padding="none">
+                        {currencyFormat(row.price as number)} VND
                       </TableCell>
                       <TableCell align="right">
                         <ImageWrap>

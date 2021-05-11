@@ -40,7 +40,7 @@ export const FormType: React.FC<FormTypeProps> = () => {
         .collection("TypeFoods")
         .add(values)
         .then((docRef) => {
-          values.idType = docRef.id;
+          values.typeID = docRef.id;
           getDataType(values);
         });
     });

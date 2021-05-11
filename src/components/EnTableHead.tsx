@@ -44,7 +44,7 @@ const headCells: HeadCell[] = [
   { id: "star", numeric: true, disablePadding: false, label: "Số sao" },
   { id: "price", numeric: true, disablePadding: false, label: "Giá" },
   { id: "image", numeric: true, disablePadding: false, label: "Hình đại diện" },
-  { id: "typeID", numeric: false, disablePadding: false, label: "Loại" },
+  { id: "typeID", numeric: true, disablePadding: false, label: "Loại" },
   { id: "edit", numeric: false, disablePadding: false, label: "" },
 ];
 export const EnTableHead: React.FC<EnTableHeadProps> = (props) => {

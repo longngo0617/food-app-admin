@@ -62,13 +62,17 @@ export const PopupAddProduct: React.FC<PopupAddProductProps> = ({
             typeID: "",
             quantity: "",
             star: "",
+            id:"",
           }}
           onSubmit={async (values, formik) => {
             const image = await handleUpload(values);
             await db
               .collection("Foods")
               .add({ ...values, image })
-              .then(() => getProducts({ ...values, image }));
+              .then((docRef) => {
+                values.id = docRef.id;
+                getProducts({ ...values, image });
+              });
             formik.resetForm();
             fc();
           }}
@@ -345,4 +349,3 @@ const Note = styled.span`
   font-size: 12px;
   margin-top: 12px;
 `;
-

@@ -15,7 +15,7 @@ interface HomeProps {}
 
 export const Home: React.FC<HomeProps> = () => {
   const [open, setOpen] = React.useState<boolean>(false);
-  const { getDataType, dataType, success,stateEdit,closeEdit } = React.useContext(UserContext);
+  const { getDataType, dataType, success,stateEdit } = React.useContext(UserContext);
   const fetchTypes = async () => {
     if (!dataType.length) {
       db.collection("TypeFoods")
