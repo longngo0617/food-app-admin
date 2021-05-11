@@ -25,7 +25,8 @@ interface Data {
   star: number;
   name: string;
   image: string;
-  edit:string;
+  typeID: string;
+  edit: string;
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -102,7 +103,9 @@ export default function EnhancedTable() {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const { products, getProducts,openEdit } = React.useContext(UserContext);
+  const { products, getProducts, openEdit, dataType } = React.useContext(
+    UserContext
+  );
   const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
@@ -132,7 +135,7 @@ export default function EnhancedTable() {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = products.map((n: Data) => n.name);
+      const newSelecteds = products.map((n: Data) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -174,6 +177,13 @@ export default function EnhancedTable() {
     setDense(event.target.checked);
   };
 
+  const getType = (idType: string) => {
+    const type: any = dataType.find((p: any) => p.idType === idType);
+    if (type) {
+      return type.name;
+    }
+  };
+
   const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
   const emptyRows =
@@ -182,6 +192,7 @@ export default function EnhancedTable() {
   if (loading) {
     return null;
   }
+
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -251,8 +262,14 @@ export default function EnhancedTable() {
                         </ImageWrap>
                       </TableCell>
                       <TableCell align="right">
+                        {getType(row.typeID as string)}
+                      </TableCell>
+                      <TableCell align="right">
                         <Tooltip title="Edit">
-                          <IconButton aria-label="edit product" onClick={() => openEdit(row as any) }>
+                          <IconButton
+                            aria-label="edit product"
+                            onClick={() => openEdit(row as any)}
+                          >
                             <EditIcon />
                           </IconButton>
                         </Tooltip>
