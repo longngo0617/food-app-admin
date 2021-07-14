@@ -29,6 +29,7 @@ interface Data {
   createdAt: number;
   status: boolean;
   total: number;
+  items: any;
 }
 type Order = "asc" | "desc";
 
@@ -112,7 +113,7 @@ export const BillTable: React.FC<BillTableProps> = ({}) => {
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, cartList.length - page * rowsPerPage);
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
-  const { removeDataType } = React.useContext(UserContext);
+  const { openBill } = React.useContext(UserContext);
   const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected: string[] = [];
@@ -252,6 +253,7 @@ export const BillTable: React.FC<BillTableProps> = ({}) => {
                       hover
                       role="checkbox"
                       aria-checked={isItemSelected}
+                      onClick={() => openBill(row.items)}
                       tabIndex={-1}
                       key={row.id}
                       selected={isItemSelected}

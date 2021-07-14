@@ -3,15 +3,19 @@ import { createContext, useReducer } from "react";
 const initState = {
   dataType: [],
   products: [],
+  listItemBill :[],
   success: false,
   newProduct: {},
   stateEdit: false,
+  stateBill:false,
 };
 
 const UserContext = createContext({
   dataType: [],
   products: [],
+  listItemBill :[],
   success: false,
+  stateBill:false,
   newProduct: {},
   stateEdit: false,
   getDataType: (item: any) => {},
@@ -23,6 +27,8 @@ const UserContext = createContext({
   closeEdit: () => {},
   editProduct: (product: any) => {},
   removeDataType: (item: string) => {},
+  openBill:(data:any) => {},
+  closeBill: () => {},
 });
 
 const userReducer = (state: any, action: any) => {
@@ -84,6 +90,18 @@ const userReducer = (state: any, action: any) => {
         ...state,
         products: [...state.products],
       };
+    case "OPEN_BILL": 
+      return {
+        ...state,
+        listItemBill:action.payload,
+        stateBill:true,
+      }
+    case "CLOSE_BILL": 
+      return {
+        ...state,
+        listItemBill:[],
+        stateBill:false,
+      }
     default:
       return state;
   }
@@ -125,12 +143,22 @@ const UserProvider = (props: any) => {
   const editProduct = (product: any) => {
     dispatch({ type: "EDIT_PRODUCT", payload: product });
   };
+
+  const openBill = (data: any) => {
+    dispatch({type: "OPEN_BILL",payload:data})
+  }
+  const closeBill = (listItem: any) => {
+    dispatch({type: "CLOSE_BILL"})
+  }
+
   const values = {
     dataType: state.dataType,
     success: state.success,
     products: state.products,
     newProduct: state.newProduct,
     stateEdit: state.stateEdit,
+    stateBill : state.stateBill,
+    listItemBill : state.listItemBill,
     editProduct,
     closeEdit,
     openEdit,
@@ -140,6 +168,8 @@ const UserProvider = (props: any) => {
     openAlert,
     closeAlert,
     removeDataType,
+    openBill,
+    closeBill,
   };
   return <UserContext.Provider value={values} {...props} />;
 };

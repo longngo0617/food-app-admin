@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { Bar } from "../components/Bar";
 import { BillTable } from "../components/BillTable";
 import { CustomerTable } from "../components/CustomerTable";
+import { DetailBill } from "../components/DetailBIll";
 import { MessageAlert } from "../components/MessageAlert";
 import { PopupAddProduct } from "../components/PopupAddProduct";
 import { PopupEditProduct } from "../components/PopupEditProduct";
@@ -17,7 +18,7 @@ interface HomeProps {}
 
 export const Home: React.FC<HomeProps> = () => {
   const [open, setOpen] = React.useState<boolean>(false);
-  const { getDataType, dataType, success,stateEdit } = React.useContext(UserContext);
+  const { getDataType, dataType, success,stateEdit,stateBill } = React.useContext(UserContext);
   const fetchTypes = async () => {
     if (!dataType.length) {
       db.collection("TypeFoods")
@@ -61,6 +62,7 @@ export const Home: React.FC<HomeProps> = () => {
         {open && <PopupAddProduct fc={() => setOpen(false)} data={dataType} />}
         {stateEdit && <PopupEditProduct  data={dataType} />}
         {success && <MessageAlert />}
+        {stateBill && <DetailBill />}
       </Page>
     </Wrap>
   );
