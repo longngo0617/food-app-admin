@@ -1,19 +1,16 @@
-import React from "react";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
-import DeleteIcon from "@material-ui/icons/Delete";
-import FilterListIcon from "@material-ui/icons/FilterList";
-import clsx from "clsx";
 import {
   createStyles,
   lighten,
   makeStyles,
-  Theme,
+  Theme
 } from "@material-ui/core/styles";
-import { db } from "../firebase/firebase";
-import { UserContext } from "../utils/Provider";
+import Toolbar from "@material-ui/core/Toolbar";
+import Tooltip from "@material-ui/core/Tooltip";
+import Typography from "@material-ui/core/Typography";
+import DeleteIcon from "@material-ui/icons/Delete";
+import clsx from "clsx";
+import React from "react";
 
 interface CartToolBarProps {
   numSelected: number;
@@ -51,16 +48,10 @@ export const CartToolBar: React.FC<CartToolBarProps> = (props) => {
           Quản lí đơn hàng
         </Typography>
       )}
-      {numSelected > 0 ? (
+      {numSelected > 0 && (
         <Tooltip title="Delete">
           <IconButton aria-label="delete" onClick={handleDelete}>
             <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton aria-label="filter list" >
-            <FilterListIcon />
           </IconButton>
         </Tooltip>
       )}

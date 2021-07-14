@@ -115,6 +115,7 @@ export const BillTable: React.FC<BillTableProps> = ({}) => {
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
   const { openBill } = React.useContext(UserContext);
   const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
+      event.stopPropagation();
     const selectedIndex = selected.indexOf(name);
     let newSelected: string[] = [];
 
@@ -177,7 +178,6 @@ export const BillTable: React.FC<BillTableProps> = ({}) => {
   };
 
   const handleDelete = () => {
-    console.log("11");
     selected.map((id: string) =>
       db
         .collection("Carts")
