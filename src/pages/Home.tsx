@@ -1,8 +1,10 @@
 import React from "react";
 import { Route, useRouteMatch } from "react-router";
-import { Switch } from "react-router-dom";
+import { Switch, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { Bar } from "../components/Bar";
+import { BillTable } from "../components/BillTable";
+import { CustomerTable } from "../components/CustomerTable";
 import { MessageAlert } from "../components/MessageAlert";
 import { PopupAddProduct } from "../components/PopupAddProduct";
 import { PopupEditProduct } from "../components/PopupEditProduct";
@@ -29,8 +31,10 @@ export const Home: React.FC<HomeProps> = () => {
         });
     }
   };
+  const router = useHistory();
   React.useEffect(() => {
     fetchTypes();
+    router.push("/quan-li-san-pham")
   }, []);
   const { url } = useRouteMatch();
   return (
@@ -41,8 +45,14 @@ export const Home: React.FC<HomeProps> = () => {
           <Route path={`/loai-san-pham`}>
             <TypeTable data={dataType} />
           </Route>
+          <Route path={`/khach-hang`}>
+            <CustomerTable/>
+          </Route>
           <Route path={`/quan-li-san-pham`}>
             <Table />
+          </Route>
+          <Route path={`/don-hang`}>
+            <BillTable />
           </Route>
           <Route exact path={`/`}>
             <Table />

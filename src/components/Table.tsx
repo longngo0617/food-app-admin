@@ -141,7 +141,6 @@ export default function EnhancedTable() {
     }
     setSelected([]);
   };
-  console.log(products);
   const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected: string[] = [];
