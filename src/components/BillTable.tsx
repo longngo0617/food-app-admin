@@ -1,26 +1,36 @@
 import {
-    Checkbox, createStyles,
-    makeStyles, Paper, Table,
-    TableBody, TableCell, TableContainer, TablePagination, TableRow, Theme
+  Checkbox,
+  createStyles,
+  IconButton,
+  makeStyles,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Theme,
+  Tooltip,
 } from "@material-ui/core";
-import moment from 'moment';
+import moment from "moment";
 import React from "react";
 import styled from "styled-components";
 import { db } from "../firebase/firebase";
-import FormatNumber from '../utils/FormatNumber';
+import FormatNumber from "../utils/FormatNumber";
 import { UserContext } from "../utils/Provider";
 import { HeadCartTable } from "./HeadCartTable";
 import { CartToolBar } from "./CartToolBar";
+import CheckIcon from "@material-ui/icons/Check";
 
 interface BillTableProps {}
 interface Data {
-    id: string;
-    createdAt: number;
-    status: boolean;
-    total: number;
+  id: string;
+  createdAt: number;
+  status: boolean;
+  total: number;
 }
 type Order = "asc" | "desc";
-
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -59,36 +69,36 @@ const Page = styled.div`
 `;
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-    if (b[orderBy] < a[orderBy]) {
-      return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-      return 1;
-    }
-    return 0;
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
   }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
 
 function getComparator<Key extends keyof any>(
-    order: Order,
-    orderBy: Key
-  ): (
-    a: { [key in Key]: number | string },
-    b: { [key in Key]: number | string }
-  ) => number {
-    return order === "desc"
-      ? (a, b) => descendingComparator(a, b, orderBy)
-      : (a, b) => -descendingComparator(a, b, orderBy);
-  }
-  
-  function stableSort<T>(array: T[], comparator: (a: T, b: T) => number) {
-    const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-    stabilizedThis.sort((a, b) => {
-      const order = comparator(a[0], b[0]);
-      if (order !== 0) return order;
-      return a[1] - b[1];
-    });
-    return stabilizedThis.map((el) => el[0]);
-  }
+  order: Order,
+  orderBy: Key
+): (
+  a: { [key in Key]: number | string },
+  b: { [key in Key]: number | string }
+) => number {
+  return order === "desc"
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
+}
+
+function stableSort<T>(array: T[], comparator: (a: T, b: T) => number) {
+  const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
+  stabilizedThis.sort((a, b) => {
+    const order = comparator(a[0], b[0]);
+    if (order !== 0) return order;
+    return a[1] - b[1];
+  });
+  return stabilizedThis.map((el) => el[0]);
+}
 
 export const BillTable: React.FC<BillTableProps> = ({}) => {
   const classes = useStyles();
@@ -99,7 +109,8 @@ export const BillTable: React.FC<BillTableProps> = ({}) => {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("total");
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, cartList.length - page * rowsPerPage);
+  const emptyRows =
+    rowsPerPage - Math.min(rowsPerPage, cartList.length - page * rowsPerPage);
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
   const { removeDataType } = React.useContext(UserContext);
   const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
@@ -165,23 +176,42 @@ export const BillTable: React.FC<BillTableProps> = ({}) => {
   };
 
   const handleDelete = () => {
-      console.log('11')
-    selected.map((id: string) => (
-      db.collection("Carts")
+    console.log("11");
+    selected.map((id: string) =>
+      db
+        .collection("Carts")
         .doc(id)
         .delete()
         .then(() => {
-            const filtered = cartList.filter((x:any) => x.id !== id);
-            setCartList(filtered);
-            setSelected([]);
+          const filtered = cartList.filter((x: any) => x.id !== id);
+          setCartList(filtered);
+          setSelected([]);
         })
         .catch((error: any) => {
           console.error("Error removing document: ", error);
         })
-    ));
+    );
   };
 
-  console.log(selected)
+  function handleCheckBill(id: string){
+    const billRef = db.collection("Carts").doc(id);
+    const cart = cartList.find((x:any) => x.id === id );
+
+    if(cart) {
+        cart.status = true;
+    }
+    setCartList([...cartList])
+    return billRef
+      .update({
+        status: true,
+      })
+      .then(() => {
+        console.log("Document successfully updated!");
+      })
+      .catch((error) => {
+        console.error("Error updating document: ", error);
+      });
+  };
 
   React.useEffect(() => {
     fetchCarts();
@@ -228,7 +258,9 @@ export const BillTable: React.FC<BillTableProps> = ({}) => {
                     >
                       <TableCell padding="checkbox">
                         <Checkbox
-                         onClick={(event) => handleClick(event, row.id as string)}
+                          onClick={(event) =>
+                            handleClick(event, row.id as string)
+                          }
                           checked={isItemSelected}
                           inputProps={{ "aria-labelledby": labelId }}
                         />
@@ -241,10 +273,23 @@ export const BillTable: React.FC<BillTableProps> = ({}) => {
                       >
                         {index}
                       </TableCell>
-                      <TableCell align="right">{moment(row.createdAt).format('L')}</TableCell>
-                      <TableCell align="right">{row.status ? "Đã hoàn thành" : "Đang xử lý"}</TableCell>
+                      <TableCell align="right">
+                        {moment(row.createdAt).format("L")}
+                      </TableCell>
+                      <TableCell align="right">
+                        {row.status ? "Đã hoàn thành" : "Đang xử lý"}
+                      </TableCell>
                       <TableCell align="right" padding="none">
                         {FormatNumber(row.total as number)} VND
+                      </TableCell>
+                      <TableCell align="right">
+                        {!row.status && (
+                          <Tooltip title="Done">
+                            <IconButton aria-label="done bill" onClick={() => handleCheckBill(row.id as string)}>
+                              <CheckIcon />
+                            </IconButton>
+                          </Tooltip>
+                        )}
                       </TableCell>
                     </TableRow>
                   );
