@@ -254,7 +254,7 @@ export const BillTable: React.FC<BillTableProps> = ({}) => {
                       hover
                       role="checkbox"
                       aria-checked={isItemSelected}
-                      onClick={() => openBill(row.items)}
+                      onClick={() => openBill(row.items,row.id as string)}
                       tabIndex={-1}
                       key={row.id}
                       selected={isItemSelected}

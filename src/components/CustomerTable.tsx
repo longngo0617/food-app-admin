@@ -57,10 +57,11 @@ interface TypeTableProps {
 export const CustomerTable: React.FC<CustomerTableProps> = ({}) => {
   const classes = useToolbarStyles();
   const [selected, setSelected] = React.useState<string[]>([]);
-  const [customerList,setCustomerList] = React.useState<any[]>([]);
+  const [customerList, setCustomerList] = React.useState<any[]>([]);
+  const [addressList, setAddressList] = React.useState<any[]>([]);
   let numSelected = selected.length;
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
-  const { removeDataType } = React.useContext(UserContext);
+  const { getUsers } = React.useContext(UserContext);
   const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected: string[] = [];
@@ -79,7 +80,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({}) => {
     }
     setSelected(newSelected);
   };
-  const fetchUser = async () => {
+  const fetchUser = () => {
     if (!customerList.length) {
       db.collection("Users")
         .get()
@@ -92,9 +93,42 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({}) => {
         });
     }
   };
+
+  const fetchAddress = () => {
+    if (!addressList.length) {
+      db.collection("Address")
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const id = doc.id;
+            const address = { ...doc.data(), id };
+            setAddressList((addressList) => addressList.concat(address));
+            getUsers(address);
+          });
+        });
+    }
+  };
+
+  const getPhone = (id: string) => {
+    const user = addressList.find((p: any) => p.userId === id);
+    if (user) {
+      return user.phoneNumber;
+    } else {
+      return undefined;
+    }
+  };
+
+  const getAddress = (id: string) => {
+    const address = addressList.filter((p: any) => p.userId === id);
+    if (address) {
+      return address;
+    }
+    return undefined;
+  };
   React.useEffect(() => {
     fetchUser();
-  },[])
+    fetchAddress();
+  }, []);
 
   return (
     <Page>
@@ -136,14 +170,21 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({}) => {
             <TableRow>
               <TableCell padding="checkbox">
                 <Checkbox
-                  indeterminate={numSelected > 0 && numSelected < customerList.length}
-                  checked={customerList.length > 0 && numSelected === customerList.length}
-                //   onChange={handleSelectAllClick}
+                  indeterminate={
+                    numSelected > 0 && numSelected < customerList.length
+                  }
+                  checked={
+                    customerList.length > 0 &&
+                    numSelected === customerList.length
+                  }
+                  //   onChange={handleSelectAllClick}
                   inputProps={{ "aria-label": "select all desserts" }}
                 />
               </TableCell>
               <TableCell>Tên khách hàng</TableCell>
               <TableCell>Email</TableCell>
+              <TableCell>Số điện thoại</TableCell>
+              <TableCell>Địa chỉ</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -173,6 +214,13 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({}) => {
                     </TableCell>
                     <TableCell component="th" scope="row">
                       {row.email}
+                    </TableCell>
+                    <TableCell component="th" scope="row">
+                      {getPhone(row.id) && getPhone(row.id)}
+                    </TableCell>
+                    <TableCell component="th" scope="row">
+                      {getAddress(row.id) &&
+                        getAddress(row.id)?.map((p) => <p>{p.address}</p>)}
                     </TableCell>
                   </TableRow>
                 );

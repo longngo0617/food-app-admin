@@ -3,21 +3,26 @@ import { createContext, useReducer } from "react";
 const initState = {
   dataType: [],
   products: [],
-  listItemBill :[],
+  listItemBill: [],
   success: false,
   newProduct: {},
   stateEdit: false,
-  stateBill:false,
+  stateBill: false,
+  listUser: [],
+  userIdAddress: "",
 };
 
 const UserContext = createContext({
   dataType: [],
   products: [],
-  listItemBill :[],
+  listItemBill: [],
   success: false,
-  stateBill:false,
+  stateBill: false,
   newProduct: {},
   stateEdit: false,
+  listUser: [],
+  userIdAddress: "",
+  getUsers: (data: any) => {},
   getDataType: (item: any) => {},
   getProducts: (item: any) => {},
   removeProduct: (item: any) => {},
@@ -27,7 +32,7 @@ const UserContext = createContext({
   closeEdit: () => {},
   editProduct: (product: any) => {},
   removeDataType: (item: string) => {},
-  openBill:(data:any) => {},
+  openBill: (data: any, id: string) => {},
   closeBill: () => {},
 });
 
@@ -90,18 +95,24 @@ const userReducer = (state: any, action: any) => {
         ...state,
         products: [...state.products],
       };
-    case "OPEN_BILL": 
+    case "OPEN_BILL":
       return {
         ...state,
-        listItemBill:action.payload,
-        stateBill:true,
-      }
-    case "CLOSE_BILL": 
+        listItemBill: action.payload.data,
+        userIdAddress:action.payload.id,
+        stateBill: true,
+      };
+    case "CLOSE_BILL":
       return {
         ...state,
-        listItemBill:[],
-        stateBill:false,
-      }
+        listItemBill: [],
+        stateBill: false,
+      };
+    case "GET_USERS":
+      return {
+        ...state,
+        listUser: [...state.listUser, action.payload],
+      };
     default:
       return state;
   }
@@ -144,12 +155,15 @@ const UserProvider = (props: any) => {
     dispatch({ type: "EDIT_PRODUCT", payload: product });
   };
 
-  const openBill = (data: any) => {
-    dispatch({type: "OPEN_BILL",payload:data})
-  }
+  const openBill = (data: any, id: string) => {
+    dispatch({ type: "OPEN_BILL", payload: { data, id } });
+  };
   const closeBill = (listItem: any) => {
-    dispatch({type: "CLOSE_BILL"})
-  }
+    dispatch({ type: "CLOSE_BILL" });
+  };
+  const getUsers = (data: any) => {
+    dispatch({ type: "GET_USERS", payload: { data } });
+  };
 
   const values = {
     dataType: state.dataType,
@@ -157,8 +171,11 @@ const UserProvider = (props: any) => {
     products: state.products,
     newProduct: state.newProduct,
     stateEdit: state.stateEdit,
-    stateBill : state.stateBill,
-    listItemBill : state.listItemBill,
+    stateBill: state.stateBill,
+    listItemBill: state.listItemBill,
+    listUser: state.listUser,
+    userIdAddress: state.userIdAddress,
+    getUsers,
     editProduct,
     closeEdit,
     openEdit,

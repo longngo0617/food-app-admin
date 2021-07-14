@@ -23,8 +23,19 @@ const useStyles = makeStyles({
 });
 
 export const DetailBill: React.FC<DetailBillProps> = (props) => {
-  const { listItemBill, closeBill }: any = React.useContext(UserContext);
+  const { listItemBill, closeBill, listUser,userIdAddress }: any =
+    React.useContext(UserContext);
   const classes = useStyles();
+
+  const getAddress = () => {
+    const ad = listUser.find((p : any) => p.data.userId === userIdAddress);
+    if(ad) {
+      return ad;
+    }
+    return undefined;
+  }
+  console.log(listUser);
+  console.log(getAddress());
 
   return (
     <Container>
@@ -48,51 +59,47 @@ export const DetailBill: React.FC<DetailBillProps> = (props) => {
             </div>
           </Wrapper>
           <Padding>
-            <div className="follow-modal-bottom" style={{maxWidth:"unset"}}>
+            <div className="follow-modal-bottom" style={{ maxWidth: "unset" }}>
               <div className="profile__wrapper">
                 <div className="profile__wrapper">
-                    <TableContainer component={Paper}>
-                      <Table
-                        className={classes.table}
-                        aria-label="simple table"
-                      >
-                        <TableHead>
-                          <TableRow>
-                            <TableCell>STT</TableCell>
-                            <TableCell align="right">Hình</TableCell>
-                            <TableCell align="right">Tên món ăn </TableCell>
-                            <TableCell align="right">Đơn giá</TableCell>
-                            <TableCell align="right">Số lượng</TableCell>
+                  <TableContainer component={Paper}>
+                    <Table className={classes.table} aria-label="simple table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>STT</TableCell>
+                          <TableCell align="right">Hình</TableCell>
+                          <TableCell align="right">Tên món ăn </TableCell>
+                          <TableCell align="right">Đơn giá</TableCell>
+                          <TableCell align="right">Số lượng</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {listItemBill.map((row: any, index: number) => (
+                          <TableRow key={row.name}>
+                            <TableCell component="th" scope="row">
+                              {index}
+                            </TableCell>
+                            <TableCell align="right">
+                              <ImageWrap>
+                                <img
+                                  src={row.food.image as string}
+                                  alt={row.food.name as string}
+                                />
+                              </ImageWrap>
+                            </TableCell>
+                            <TableCell align="right">{row.food.name}</TableCell>
+                            <TableCell align="right">
+                              {FormatNumber(row.food.price)} VND
+                            </TableCell>
+                            <TableCell align="right">{row.quantity}</TableCell>
                           </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {listItemBill.map((row: any, index: number) => (
-                            <TableRow key={row.name}>
-                              <TableCell component="th" scope="row">
-                                {index}
-                              </TableCell>
-                              <TableCell align="right">
-                                <ImageWrap>
-                                  <img
-                                    src={row.food.image as string}
-                                    alt={row.food.name as string}
-                                  />
-                                </ImageWrap>
-                              </TableCell>
-                              <TableCell align="right">
-                                {row.food.name}
-                              </TableCell>
-                              <TableCell align="right">
-                                {FormatNumber(row.food.price)} VND
-                              </TableCell>
-                              <TableCell align="right">
-                                {row.quantity}
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                  <AddressContainer>
+                    {/* {getAddress() && <p>Địa chỉ khách hàng: {getAddress().address}</p>} */}
+                  </AddressContainer>
                 </div>
               </div>
             </div>
@@ -146,3 +153,5 @@ const ImageWrap = styled.div`
 const Padding = styled.div`
   padding: 0 12px;
 `;
+
+const AddressContainer = styled.div``;
