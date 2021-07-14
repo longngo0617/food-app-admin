@@ -115,7 +115,7 @@ export const BillTable: React.FC<BillTableProps> = ({}) => {
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
   const { openBill } = React.useContext(UserContext);
   const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
-      event.stopPropagation();
+    event.stopPropagation();
     const selectedIndex = selected.indexOf(name);
     let newSelected: string[] = [];
 
@@ -194,14 +194,15 @@ export const BillTable: React.FC<BillTableProps> = ({}) => {
     );
   };
 
-  function handleCheckBill(id: string){
+  function handleCheckBill(id: string, e: React.MouseEvent<unknown>) {
+    e.stopPropagation();
     const billRef = db.collection("Carts").doc(id);
-    const cart = cartList.find((x:any) => x.id === id );
+    const cart = cartList.find((x: any) => x.id === id);
 
-    if(cart) {
-        cart.status = true;
+    if (cart) {
+      cart.status = true;
     }
-    setCartList([...cartList])
+    setCartList([...cartList]);
     return billRef
       .update({
         status: true,
@@ -212,7 +213,7 @@ export const BillTable: React.FC<BillTableProps> = ({}) => {
       .catch((error) => {
         console.error("Error updating document: ", error);
       });
-  };
+  }
 
   React.useEffect(() => {
     fetchCarts();
@@ -287,7 +288,10 @@ export const BillTable: React.FC<BillTableProps> = ({}) => {
                       <TableCell align="right">
                         {!row.status && (
                           <Tooltip title="Done">
-                            <IconButton aria-label="done bill" onClick={() => handleCheckBill(row.id as string)}>
+                            <IconButton
+                              aria-label="done bill"
+                              onClick={(e) => handleCheckBill(row.id as string,e)}
+                            >
                               <CheckIcon />
                             </IconButton>
                           </Tooltip>
